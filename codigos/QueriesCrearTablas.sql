@@ -45,7 +45,7 @@ CREATE TABLE Estado_estacion(
 CREATE TABLE Catalogo_de_estaciones(
 	id_estac BIGINT PRIMARY KEY,
 	cve_estac VARCHAR(5) NOT NULL,
-	nom_estac VARCHAR(30) NOT NULL,
+	nom_estac VARCHAR(100) NOT NULL,
 	longitud FLOAT NOT NULL,
 	latitud FLOAT NOT NULL,
 	alt SMALLINT NOT NULL,
