@@ -61,13 +61,13 @@ CREATE TABLE Catalogo_de_estaciones(
 
 -- Se crea la tabla con el registro de los datos por estación
 CREATE TABLE Meteorologia(
-	id_meteorologia INT PRIMARY KEY,
+	id_meteorologia INT PRIMARY KEY AUTO_INCREMENT,
 	id_estac BIGINT NOT NULL,
 	mesurementAgency VARCHAR(10) NOT NULL,
 	id_parameter INT NOT NULL,
 	fecha DATE NOT NULL,
 	hora TIME NOT NULL,
-	valor FLOAT NOT NULL,
+	valor FLOAT,
 	anio INT NOT NULL,
     FOREIGN KEY(id_estac) REFERENCES Catalogo_de_estaciones(id_estac)
 		ON DELETE RESTRICT
