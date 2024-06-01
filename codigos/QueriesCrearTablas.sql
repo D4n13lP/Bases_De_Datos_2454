@@ -32,7 +32,6 @@ CREATE TABLE Unidad_parametro(
 CREATE TABLE Catalogo_ciudades(
 	id_city INT PRIMARY KEY AUTO_INCREMENT,
 	city VARCHAR(20) NOT NULL,
-	cityCode VARCHAR(20) NOT NULL,
 	country VARCHAR(20) NOT NULL
 );
 
