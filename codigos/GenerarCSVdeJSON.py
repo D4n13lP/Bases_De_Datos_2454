@@ -1,36 +1,54 @@
+""" 
+Programa que crea un csv en base a todos los json para poder cargar en otro programa
+el csv a la base de datos
+"""
 import pandas as pd
 
+#Se crea el diccionario con los datos relevantes
 dict_aux = {"mesurementAgency": [], "parametro": [], "fecha": [], "hora": [],"estacion":[], "valor": [], "anio": []}
 
-i = 2013
+#Auxiliares para las llaves de las fechas
 s = ""
 t = ""
 
+#Ciclo que recorre los JSON puesto que solo se diferencían por el año
 for i in range(2013, 2024):
+    #Auxiliar para recorrer las fechas
     aux_fecha = -1
+    #Se crea el path en base al año
     path = "datos-base/históricos-20240524T201155Z-001/históricos/meteorología_"+str(i)+".json"
     df = pd.read_json(path)
+    #Se genera una lista con todas las fechas del JSON
     dias = [key for key in dict(df['pollutionMeasurements']['date']).keys()]
     #Enero
+    #Bucle que recorre los días del mes
     for j in range(1,32):
+        #Condicional para las llaves en las fechas por parte de los días
         if j<10:
             s = "0"
         else:
             s = ""
+        #Bucle que recorre las horas del día
         for k in range(1,25):
+            # Se aumenta la fecha puesto que éstas se van diferenciando por una hora
             aux_fecha += 1
+            #Condicional para las llaves en las fechas por parte de las horas
             if k<10:
                 t = "0"
             else:
                 t = ""
+            #Bucle que recorre las llaves de RH
             for key, value_date in dict(df['pollutionMeasurements']['date'][str(i) + '-01-' + s + str(j) + ' ' + t + str(k) + ':00']['RH']).items():
+                #Se agrega al diccionario cada registro
                 dict_aux["mesurementAgency"].append("SIMAT")
                 dict_aux["parametro"].append('RH')
                 dict_aux["estacion"].append(key)
                 dict_aux["valor"].append(df['pollutionMeasurements']['date'][str(i) + '-01-' + s + str(j) + ' ' + t + str(k) + ':00']['RH'][key])
+                #Puesto que la fecha se divide por un espacio el dia y la hora, se dividen en datos distintos con split
                 dict_aux["fecha"].append(str(dias[aux_fecha]).split(" ")[0])
                 dict_aux["hora"].append(str(dias[aux_fecha]).split(" ")[1])
                 dict_aux["anio"].append(i)
+            #Bucle que recorre las llaves de TMP
             for key, value_date in dict(df['pollutionMeasurements']['date'][str(i) + '-01-' + s + str(j) + ' ' + t + str(k) + ':00']['TMP']).items():
                 dict_aux["mesurementAgency"].append("SIMAT")
                 dict_aux["parametro"].append('TMP')
@@ -39,6 +57,7 @@ for i in range(2013, 2024):
                 dict_aux["fecha"].append(str(dias[aux_fecha]).split(" ")[0])
                 dict_aux["hora"].append(str(dias[aux_fecha]).split(" ")[1])
                 dict_aux["anio"].append(i)
+            #Bucle que recorre las llaves de WSP
             for key, value_date in dict(df['pollutionMeasurements']['date'][str(i) + '-01-' + s + str(j) + ' ' + t + str(k) + ':00']['WSP']).items():
                 dict_aux["mesurementAgency"].append("SIMAT")
                 dict_aux["parametro"].append('WSP')
@@ -47,6 +66,7 @@ for i in range(2013, 2024):
                 dict_aux["fecha"].append(str(dias[aux_fecha]).split(" ")[0])
                 dict_aux["hora"].append(str(dias[aux_fecha]).split(" ")[1])
                 dict_aux["anio"].append(i)
+            #Bucle que recorre las llaves de WDR
             for key, value_date in dict(df['pollutionMeasurements']['date'][str(i) + '-01-' + s + str(j) + ' ' + t + str(k) + ':00']['WDR']).items():
                 dict_aux["mesurementAgency"].append("SIMAT")
                 dict_aux["parametro"].append('WDR')
@@ -55,6 +75,7 @@ for i in range(2013, 2024):
                 dict_aux["fecha"].append(str(dias[aux_fecha]).split(" ")[0])
                 dict_aux["hora"].append(str(dias[aux_fecha]).split(" ")[1])
                 dict_aux["anio"].append(i)
+            #Bucle que recorre las llaves de PBa
             for key, value_date in dict(df['pollutionMeasurements']['date'][str(i) + '-01-' + s + str(j) + ' ' + t + str(k) + ':00']['PBa']).items():
                 dict_aux["mesurementAgency"].append("SIMAT")
                 dict_aux["parametro"].append('PBa')
@@ -64,7 +85,7 @@ for i in range(2013, 2024):
                 dict_aux["hora"].append(str(dias[aux_fecha]).split(" ")[1])
                 dict_aux["anio"].append(i)
     #Febrero
-    #Por si es bisiesto
+    #Por si es bisiesto el año, entonces el bucle irá hasta 29 días
     if i%4 == 0:
         for j in range(1,30):
             if j<10:
@@ -169,6 +190,7 @@ for i in range(2013, 2024):
                     dict_aux["fecha"].append(str(dias[aux_fecha]).split(" ")[0])
                     dict_aux["hora"].append(str(dias[aux_fecha]).split(" ")[1])
                     dict_aux["anio"].append(i)
+    #Todos los siguientes bucles son iguales, solo cambia el for de j dependiendo de la cantidad de días del mes
     #Marzo
     for j in range(1,32):
         if j<10:
@@ -273,7 +295,7 @@ for i in range(2013, 2024):
                 dict_aux["fecha"].append(str(dias[aux_fecha]).split(" ")[0])
                 dict_aux["hora"].append(str(dias[aux_fecha]).split(" ")[1])
                 dict_aux["anio"].append(i)
-    #Los registros de 2023 llegan hasta abril
+    #Los registros de 2023 llegan hasta abril, por lo que se corta el bucle 
     if i == 2023:
         break
     #Mayo
@@ -692,7 +714,9 @@ for i in range(2013, 2024):
                 dict_aux["fecha"].append(str(dias[aux_fecha]).split(" ")[0])
                 dict_aux["hora"].append(str(dias[aux_fecha]).split(" ")[1])
                 dict_aux["anio"].append(i)
-        
+
+#Se genera el df conforme al diccionario creado con los bucles      
 df = pd.DataFrame(dict_aux)
+#Se genera el csv en base al df
 df.to_csv("meteorologia_json.csv", index = False)
    
